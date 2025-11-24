@@ -21,7 +21,7 @@ connectDB();
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL, // production frontend
+  origin: process.env.FRONTEND_URL,
   credentials: true
 }));
 app.use(express.json());
