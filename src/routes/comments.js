@@ -1,57 +1,75 @@
 // backend/src/routes/comments.js
 const express = require("express");
-const { body, validationResult } = require("express-validator");
-const Comment = require("../models/Comment");
-const auth = require("../middleware/auth"); // existing middleware
-
 const router = express.Router();
+const Comment = require("../models/Comment");
+const { authMiddleware } = require("../middleware/auth");
 
-// Get all comments (sorted oldest -> newest)
+// GET all comments
 router.get("/", async (req, res) => {
   try {
     const comments = await Comment.find().sort({ createdAt: 1 });
     res.json(comments);
   } catch (err) {
-    console.error("Failed to load comments:", err);
-    res.status(500).json({ error: "Failed to load comments" });
+    console.error(err);
+    res.status(500).json({ error: "Failed to fetch comments" });
   }
 });
 
-// Post a new comment (requires auth)
-router.post(
-  "/",
-  auth,
-  body("text").isString().trim().isLength({ min: 3, max: 5000 }),
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+// POST new comment
+router.post("/", authMiddleware, async (req, res) => {
+  try {
+    const { text } = req.body;
+    const username = req.user.username || req.user.email || "Anonymous";
 
-    try {
-      const { text } = req.body;
-      // If you store username on the User model, you can fetch it. For now, try token-decoded userId.
-      let username = "Anonymous";
-      if (req.userId) {
-        // Attempt to read username quickly without requiring controller import:
-        // This is optional — if you want username, you can populate in a later iteration.
-        // For now we set username to the id's string for traceability.
-        username = req.username || req.userId.toString();
-      }
+    const comment = new Comment({
+      text,
+      username,
+      userId: req.user._id,
+    });
 
-      const comment = new Comment({
-        userId: req.userId || null,
-        username,
-        text
-      });
-
-      await comment.save();
-      res.status(201).json(comment);
-    } catch (err) {
-      console.error("Failed to save comment:", err);
-      res.status(500).json({ error: "Failed to save comment" });
-    }
+    const saved = await comment.save();
+    res.json(saved);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to save comment" });
   }
-);
+});
+
+// DELETE a comment
+router.delete("/:id", authMiddleware, async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.id);
+    if (!comment) return res.status(404).json({ error: "Comment not found" });
+
+    if (comment.userId.toString() !== req.user._id.toString())
+      return res.status(403).json({ error: "Not authorized to delete this comment" });
+
+    await comment.deleteOne();
+    res.json({ message: "Comment deleted" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to delete comment" });
+  }
+});
+
+// PATCH to edit a comment
+router.patch("/:id", authMiddleware, async (req, res) => {
+  try {
+    const { text } = req.body;
+    const comment = await Comment.findById(req.params.id);
+
+    if (!comment) return res.status(404).json({ error: "Comment not found" });
+
+    if (comment.userId.toString() !== req.user._id.toString())
+      return res.status(403).json({ error: "Not authorized to edit this comment" });
+
+    comment.text = text;
+    await comment.save();
+    res.json(comment);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to edit comment" });
+  }
+});
 
 module.exports = router;
