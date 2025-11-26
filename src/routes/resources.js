@@ -13,7 +13,6 @@ router.get('/', (req, res) => {
         { name: 'Crisis Text Line', phone: 'Text HOME to 741741', available: '24/7' }
       ]
     },
-
     abuseTypes: [
       {
         type: 'Physical Abuse',
@@ -46,25 +45,14 @@ router.get('/', (req, res) => {
         signs: ['Following', 'Unwanted gifts/messages', 'Showing up uninvited']
       }
     ],
-
     supportServices: [
       { name: 'Legal Aid', description: 'Free or low-cost legal assistance' },
       { name: 'Shelters', description: 'Safe housing options' },
       { name: 'Counseling', description: 'Mental health support' },
       { name: 'Financial Assistance', description: 'Emergency funds and planning' }
-    ],
-
-    // ✅ New Medical Support Section
-    medicalSupport: [
-      {
-        name: 'Health Link Support',
-        description:
-          'Confidential help for medical challenges, sexual violence recovery, and health-related support.',
-        link: 'https://final-frontend-psi.vercel.app/'
-      }
     ]
   };
-
+  
   res.json(resources);
 });
 
