@@ -19,7 +19,6 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: true,
-    validate: [isEmpty, "Username must not br "],
   },
   emergencyContact: {
     name: String,
