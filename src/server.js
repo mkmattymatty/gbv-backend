@@ -4,6 +4,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const http = require("http");
 const { Server } = require("socket.io");
+const passport = require("./config/passport");
 
 const authRoutes = require("./routes/auth");
 const safetyPlanRoutes = require("./routes/safetyPlan");
@@ -27,6 +28,7 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(passport.initialize());
 
 // Routes
 app.use("/api/safety-plans", safetyPlanRoutes);
