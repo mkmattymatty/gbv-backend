@@ -6,6 +6,8 @@ const createToken = (userId) => {
     process.env.JWT_SECRET || "your-secret-key",
     { expiresIn: "3d" }
   );
+
+  return token; // Add this line
 };
 
 module.exports = createToken;
