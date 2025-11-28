@@ -1,12 +1,7 @@
 const createToken = require("../utils/jwt");
-
+const User = require("../models/User");
 // Controler for the register user
 const registerUser = async (req, res) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
   try {
     const { email, password, username, emergencyContact } = req.body;
 
@@ -61,7 +56,23 @@ const loginUser = async (req, res) => {
   }
 };
 
+// Controller for user logout
+const logoutUser = (req, res) => {
+  try {
+    // Clear the Authorization header
+    res.removeHeader("Authorization");
+
+    res.status(200).json({
+      message: "Logout successful",
+    });
+  } catch (err) {
+    console.error("LOGOUT ERROR:", err);
+    res.status(500).json({ error: "Logout failed" });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
+  logoutUser,
 };

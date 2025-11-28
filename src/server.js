@@ -32,7 +32,8 @@ app.use(express.json());
 app.use("/api/safety-plans", safetyPlanRoutes);
 app.use("/api/resources", resourceRoutes);
 app.use("/api/messages", messageRoutes);
-app.use("/api/c omments", commentRoutes);
+app.use("/api/comments", commentRoutes);
+app.use("/api/auth", authRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

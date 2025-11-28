@@ -5,14 +5,8 @@ const userController = require("../controllers/userControllers");
 
 const router = express.Router();
 
-// ========================
-// REGISTER
-// ========================
 router.post("/register", userController.registerUser);
-
-// ========================
-// LOGIN
-// ========================
 router.post("/login", userController.loginUser);
+router.post("/logout", userController.logoutUser);
 
 module.exports = router;
