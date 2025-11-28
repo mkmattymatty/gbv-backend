@@ -34,6 +34,8 @@ app.use("/api/resources", resourceRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/password", passwordRoutes);
+
 
 // Health check
 app.get("/api/health", (req, res) => {
