@@ -2,7 +2,8 @@
 const express = require("express");
 const router = express.Router();
 const Comment = require("../models/Comment");
-const { authMiddleware } = require("../middleware/auth");
+const checkUser = require("../middleware/checkUser");
+const requireAuth = require("../middleware/requireAuth");
 
 // GET all comments
 router.get("/", async (req, res) => {
@@ -16,7 +17,7 @@ router.get("/", async (req, res) => {
 });
 
 // POST new comment
-router.post("/", authMiddleware, async (req, res) => {
+router.post("/", requireAuth, async (req, res) => {
   try {
     const { text } = req.body;
     const username = req.user.username || req.user.email || "Anonymous";
@@ -36,13 +37,15 @@ router.post("/", authMiddleware, async (req, res) => {
 });
 
 // DELETE a comment
-router.delete("/:id", authMiddleware, async (req, res) => {
+router.delete("/:id", requireAuth, async (req, res) => {
   try {
     const comment = await Comment.findById(req.params.id);
     if (!comment) return res.status(404).json({ error: "Comment not found" });
 
     if (comment.userId.toString() !== req.user._id.toString())
-      return res.status(403).json({ error: "Not authorized to delete this comment" });
+      return res
+        .status(403)
+        .json({ error: "Not authorized to delete this comment" });
 
     await comment.deleteOne();
     res.json({ message: "Comment deleted" });
@@ -53,7 +56,7 @@ router.delete("/:id", authMiddleware, async (req, res) => {
 });
 
 // PATCH to edit a comment
-router.patch("/:id", authMiddleware, async (req, res) => {
+router.patch("/:id", requireAuth, async (req, res) => {
   try {
     const { text } = req.body;
     const comment = await Comment.findById(req.params.id);
@@ -61,7 +64,9 @@ router.patch("/:id", authMiddleware, async (req, res) => {
     if (!comment) return res.status(404).json({ error: "Comment not found" });
 
     if (comment.userId.toString() !== req.user._id.toString())
-      return res.status(403).json({ error: "Not authorized to edit this comment" });
+      return res
+        .status(403)
+        .json({ error: "Not authorized to edit this comment" });
 
     comment.text = text;
     await comment.save();
