@@ -1,5 +1,6 @@
 const express = require("express");
 const userController = require("../controllers/userControllers");
+const passport = require("passport");
 const {
   googleAuthSuccess,
   googleAuthFailure,
