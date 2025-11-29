@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const http = require("http");
 const { Server } = require("socket.io");
 const passport = require("./config/passport");
+const errorHandler = require("./middleware/errorHandler");
 
 const authRoutes = require("./routes/auth");
 const safetyPlanRoutes = require("./routes/safetyPlan");
@@ -49,6 +50,16 @@ app.use("/api/password", passwordRoutes);
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Server is running" });
 });
+
+// 404 handler
+app.use((req, res, next) => {
+  const error = new Error(`Route not found - ${req.originalUrl}`);
+  error.status = 404;
+  next(error);
+});
+
+// Use error handler middleware
+app.use(errorHandler);
 
 // Error handling
 app.use((err, req, res, next) => {
