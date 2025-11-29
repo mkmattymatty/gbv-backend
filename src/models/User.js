@@ -52,7 +52,7 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 
 // Handling the login
 userSchema.statics.login = async (email, password) => {
-  const user = await this.findOne({ eamil });
+  const user = await this.findOne({ email });
 
   if (user) {
     const auth = await bcrypt.compare(password, user.password);

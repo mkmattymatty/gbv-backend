@@ -51,13 +51,6 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "Server is running" });
 });
 
-// 404 handler
-app.use((req, res, next) => {
-  const error = new Error(`Route not found - ${req.originalUrl}`);
-  error.status = 404;
-  next(error);
-});
-
 // Use error handler middleware
 app.use(errorHandler);
 
