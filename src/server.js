@@ -61,12 +61,6 @@ app.use((req, res, next) => {
 // Use error handler middleware
 app.use(errorHandler);
 
-// Error handling
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: "Something went wrong!" });
-});
-
 // Create HTTP server
 const server = http.createServer(app);
 
