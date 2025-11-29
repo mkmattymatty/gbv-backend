@@ -13,7 +13,7 @@ const messageRoutes = require("./routes/messages");
 const commentRoutes = require("./routes/comments");
 const connectDB = require("./config/db");
 const Message = require("./models/Message");
-const paswordRoutes = require("./routes/password");
+const passwordRoutes = require("./routes/password");
 
 const app = express();
 
