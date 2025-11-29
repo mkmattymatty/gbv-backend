@@ -1,9 +1,17 @@
 const createToken = require("../utils/jwt");
 const User = require("../models/User");
+
 // Controler for the register user
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
   try {
     const { email, password, username, emergencyContact } = req.body;
+
+    // Validate inputs
+    if (!email || !password || !username) {
+      return res
+        .status(400)
+        .json({ error: "Email, password, and username are required" });
+    }
 
     // Check if email already used
     const existingUser = await User.findOne({ email });
@@ -24,16 +32,20 @@ const registerUser = async (req, res) => {
       token,
     });
   } catch (err) {
-    console.error("REGISTER ERROR:", err);
-    res.status(500).json({ error: "Registration failed" });
+    next(err);
   }
 };
 
 // Controller for the user login
-const loginUser = async (req, res) => {
-  const { email, password } = req.body;
-
+const loginUser = async (req, res, next) => {
   try {
+    const { email, password } = req.body;
+
+    // Validate inputs
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
+    }
+
     const user = await User.login(email, password);
 
     // create token and set it into the header for easy login
@@ -51,13 +63,12 @@ const loginUser = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("LOGIN ERROR:", err);
-    res.status(500).json({ error: "Login failed" });
+    next(err);
   }
 };
 
 // Controller for user logout
-const logoutUser = (req, res) => {
+const logoutUser = (req, res, next) => {
   try {
     // Clear the Authorization header
     res.removeHeader("Authorization");
@@ -66,8 +77,7 @@ const logoutUser = (req, res) => {
       message: "Logout successful",
     });
   } catch (err) {
-    console.error("LOGOUT ERROR:", err);
-    res.status(500).json({ error: "Logout failed" });
+    next(err);
   }
 };
 
