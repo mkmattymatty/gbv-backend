@@ -13,6 +13,7 @@ const messageRoutes = require("./routes/messages");
 const commentRoutes = require("./routes/comments");
 const connectDB = require("./config/db");
 const Message = require("./models/Message");
+const paswordRoutes = require("./routes/password");
 
 const app = express();
 
@@ -38,7 +39,6 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/password", passwordRoutes);
-
 
 // Health check
 app.get("/api/health", (req, res) => {
