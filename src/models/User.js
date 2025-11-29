@@ -51,7 +51,7 @@ userSchema.methods.comparePassword = async function (candidatePassword) {
 };
 
 // Handling the login
-userSchema.statics.login = async (email, password) => {
+userSchema.statics.login = async function (email, password) {
   const user = await this.findOne({ email });
 
   if (user) {
@@ -64,4 +64,5 @@ userSchema.statics.login = async (email, password) => {
 
   throw Error("Incorrect Email");
 };
+
 module.exports = mongoose.model("User", userSchema);
