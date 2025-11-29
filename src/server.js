@@ -28,7 +28,12 @@ app.use(helmet());
 //     credentials: true,
 //   })
 // );
-app.use(cors());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(passport.initialize());
 
@@ -55,9 +60,15 @@ app.use((err, req, res, next) => {
 const server = http.createServer(app);
 
 // Initialize Socket.io
+// const io = new Server(server, {
+//   cors: {
+//     origin: process.env.FRONTEND_URL,
+//     methods: ["GET", "POST"],
+//   },
+// });
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL,
+    origin: "*",
     methods: ["GET", "POST"],
   },
 });
